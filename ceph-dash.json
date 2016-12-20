@@ -1,0 +1,69 @@
+{
+  "id": "/ceph-dash",
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 512,
+  "fetch": [
+    {
+      "uri": "http://172.31.16.16/ceph.conf"
+    },
+    {
+      "uri": "http://172.31.16.16/ceph.mon.keyring"
+    },
+    {
+      "uri": "http://172.31.16.16/ceph.client.admin.keyring"
+    }
+  ],
+  "backoffSeconds": 1,
+  "backoffFactor": 1.15,
+  "maxLaunchDelaySeconds": 3600,
+  "container": {
+    "docker": {
+      "image": "fernandosanchez/ceph-dash",
+      "forcePullImage": true,
+      "privileged": false,
+      "portMappings": [
+        {
+          "containerPort": 5000,
+	  "servicePort": 15000,
+          "protocol": "tcp",
+          "name": "ceph-dash",
+          "labels": {
+            "VIP_0": "/ceph-dash:15000"
+          }
+        }
+      ],
+      "network": "BRIDGE"
+    }
+  },
+  "healthChecks": [
+    {
+      "protocol": "COMMAND",
+      "command": {
+        "value": "`test \"$(curl -4 -w '%{http_code}' -s http://localhost:5000/|cut -f1 -d\" \")\" == 200`"
+      },
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "upgradeStrategy": {
+    "minimumHealthCapacity": 1,
+    "maximumOverCapacity": 1
+  },
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 5000,
+      "protocol": "tcp",
+      "name": "ceph-dash",
+      "labels": {
+        "VIP_0": "/ceph-dash:5000"
+      }
+    }
+  ],
+  "requirePorts": false
+}

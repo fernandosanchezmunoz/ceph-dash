@@ -1,7 +1,7 @@
 {
-    "ceph_config": "/etc/ceph/ceph.conf",
+    "ceph_config": "/ceph-dash/ceph.conf",
     "influxdb": {
-        "uri": "influxdb://myinfluxdb.server.com:8086/mydatabase",
+        "uri": "influxdb://influxdb.marathon.l4lb.thisdcos.directory:8086/ceph-dash",
         "metrics": [
             {
                 "queries" : [
